@@ -1,6 +1,7 @@
 import messages from "./helpers/messages.js";
 import getRandomSticker from "./helpers/getSticker.js";
-import bot from "./bot.js";
+// import bot from "./bot.js";
+import bot from "./index.js";
 
 bot.onText(/\/start/, (msg) => {
   const chatId = msg.chat.id;
