@@ -1,29 +1,127 @@
-// import express from "express";
-// import dotenv from "dotenv";
-// import bot from "./bot.js";
-
-// dotenv.config();
-
-// const { PORT } = process.env;
-// const app = express();
-// const port = PORT || 3000;
-
-// app.use(express.json());
-// app.post("/webhook", (req, res) => {
-//   try {
-//     bot.processUpdate(req.body);
-//     res.sendStatus(200);
-//   } catch (error) {
-//     console.error("Error processing webhook", error);
-//     res.sendStatus(500);
-//   }
-// });
-
-// app.listen(port, () => {
-//   console.log(`Server is running on port ${port}`);
-// });
+import messages from "./helpers/messages.js";
+import getRandomSticker from "./helpers/getSticker.js";
 import TelegramBot from "node-telegram-bot-api";
-const token = "7643769299:AAF3mg373NtHhk3bUTFe608Hvm0QDmQQJDk";
-const bot = new TelegramBot(token, { polling: true });
+import dotenv from "dotenv";
+import express from "express";
 
-export default bot;
+dotenv.config();
+
+const { TELEGRAM_TOKEN, RAILWAY_API_URL, PORT = 3000 } = process.env;
+
+const bot = new TelegramBot(TELEGRAM_TOKEN, { polling: false });
+bot.setWebHook(`${RAILWAY_API_URL}/webhook`);
+const app = express();
+app.use(express.json());
+const URL = `${RAILWAY_API_URL}/bot${TELEGRAM_TOKEN}`;
+bot.setWebHook(URL);
+app.post(`/bot${TELEGRAM_TOKEN}`, (req, res) => {
+  try {
+    bot.processUpdate(req.body);
+    res.sendStatus(200);
+  } catch (error) {
+    console.error("Error processing webhook", error);
+    res.sendStatus(500);
+  }
+});
+
+// const bot = new TelegramBot(TELEGRAM_TOKEN, { polling: true });
+
+bot.onText(/\/start/, (msg) => {
+  const chatId = msg.chat.id;
+  const options = {
+    reply_markup: {
+      inline_keyboard: [
+        [
+          { text: "Українська", callback_data: "motivate_ukr" },
+          { text: "English", callback_data: "motivate_eng" },
+          { text: "Español", callback_data: "motivate_esp" },
+        ],
+      ],
+    },
+  };
+
+  bot.sendMessage(chatId, messages.welcomeMessage, options);
+});
+
+bot.on("callback_query", async (query) => {
+  const chatId = query.message.chat.id;
+  const callbackData = query.data;
+
+  if (callbackData.startsWith("motivate")) {
+    const language = callbackData.split("_")[1];
+
+    if (!messages.phrases[language]) {
+      console.error(`Invalid language: ${language}`);
+      return;
+    }
+
+    const greetingMessage = messages.greetings[language];
+    const options = {
+      reply_markup: {
+        inline_keyboard: [
+          [
+            {
+              text: messages.motivateButtonName[language],
+              callback_data: `generate_${language}`,
+            },
+          ],
+        ],
+      },
+    };
+
+    try {
+      await bot.sendMessage(chatId, greetingMessage, options);
+    } catch (error) {
+      console.error("Error sending greeting message", error);
+    }
+  }
+
+  if (callbackData.startsWith("generate")) {
+    const language = callbackData.split("_")[1];
+
+    const stickerPath = getRandomSticker();
+    if (stickerPath) {
+      try {
+        await bot.sendSticker(chatId, stickerPath);
+      } catch (error) {
+        console.error("Error sending sticker", error);
+        await bot.sendMessage(chatId, "👋😊");
+      }
+    } else {
+      await bot.sendMessage(chatId, "👋😊");
+    }
+
+    const randomPhrase =
+      messages.phrases[language][
+        Math.floor(Math.random() * messages.phrases[language].length)
+      ];
+
+    if (!randomPhrase) {
+      console.error("Random phrase is empty.");
+      return;
+    }
+
+    const styledMessage = `${messages.fireworks} ${randomPhrase} ${messages.fireworks}`;
+    const options = {
+      reply_markup: {
+        inline_keyboard: [
+          [
+            {
+              text: messages.moreMotivateButtonName[language],
+              callback_data: `generate_${language}`,
+            },
+          ],
+        ],
+      },
+    };
+
+    try {
+      await bot.sendMessage(chatId, styledMessage, options);
+    } catch (error) {
+      console.error("Error sending message", error);
+    }
+  }
+});
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
+});
