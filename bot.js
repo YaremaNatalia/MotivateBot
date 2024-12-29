@@ -4,8 +4,8 @@ import dotenv from "dotenv";
 dotenv.config();
 
 const { TELEGRAM_TOKEN, RAILWAY_API_URL } = process.env;
-
-const bot = new TelegramBot(TELEGRAM_TOKEN, { polling: false });
+const token = "7643769299:AAF3mg373NtHhk3bUTFe608Hvm0QDmQQJDk";
+const bot = new TelegramBot(token, { polling: false });
 bot.setWebHook(`${RAILWAY_API_URL}/webhook`);
 
 export default bot;
