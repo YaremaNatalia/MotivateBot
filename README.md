@@ -3,5 +3,5 @@
  It’s a fun and uplifting way to stay inspired!
 
 <p align="center">
-  <img src="stickers/AnimatedSticker1-ezgif.com-gif-maker.gif" alt="Animated kitten Sticker">
+  <img src="stickers/kitten.gif" alt="Animated kitten Sticker">
 </p>
