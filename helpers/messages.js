@@ -1,10 +1,3 @@
-const TelegramBot = require("node-telegram-bot-api");
-const path = require("path");
-const fs = require("fs");
-
-const token = "7643769299:AAF3mg373NtHhk3bUTFe608Hvm0QDmQQJDk";
-const bot = new TelegramBot(token, { polling: true });
-
 const phrases = {
   ukr: [
     "Кожен великий шлях починається з маленького кроку — зроби свій сьогодні.",
@@ -293,131 +286,33 @@ const phrases = {
     "¡Estás haciendo un trabajo increíble, sigue así!",
   ],
 };
-function getRandomSticker() {
-  const stickersFolderPath = path.join(__dirname, "stickers");
-  if (!fs.existsSync(stickersFolderPath)) {
-    console.warn("Stickers folder not found.");
-    return null;
-  }
-
-  const files = fs.readdirSync(stickersFolderPath);
-  const tgsFiles = files.filter((file) => file.endsWith(".tgs"));
-
-  if (tgsFiles.length === 0) {
-    console.warn("No stickers found in the 'stickers' folder.");
-    return null;
-  }
-  const randomFile = tgsFiles[Math.floor(Math.random() * tgsFiles.length)];
-  return path.join(stickersFolderPath, randomFile);
-}
 
 const greetings = {
-  ukr: "Привіт!😊\nДавай зробимо твій день особливим!\nГотовий отримати заряд мотивації?🚀",
-  eng: "Hello!😊\nLet's make your day special!\nReady for some motivation?🚀",
-  esp: "¡Hola!😊\n¡Vamos a hacer que tu día sea especial!\n¿Listo para motivarte?🚀",
+  ukr: "Привіт!😊\nЯ мотиваційний бот. Давай но зробимо твій день особливим!\nГотовий отримати заряд мотивації?🚀",
+  eng: "Hello!😊\nI am a motivation bot. Let's make your day special!\nReady for some motivation?🚀",
+  esp: "¡Hola!😊\nSoy un bot motivador. ¡Vamos a hacer que tu día sea especial!\n¿Listo para motivarte?🚀",
 };
 
-const motivateTexts = {
+const motivateButtonName = {
   ukr: "Мотивуй!",
   eng: "Motivate me!",
   esp: "¡Motivame!",
 };
 
-const moreMotivationTexts = {
-  ukr: "💥 Хочу ще мотивацію! 💥",
-  eng: "💥 I want more motivation! 💥",
-  esp: "💥 ¡Quiero más motivación! 💥",
+const moreMotivateButtonName = {
+  ukr: "💥 Ще мотивацію! 💥",
+  eng: "💥 More motivation! 💥",
+  esp: "💥 ¡Más motivación! 💥",
 };
 
-// Обробка команди /start
-bot.onText(/\/start/, (msg) => {
-  const chatId = msg.chat.id;
-  const welcomeMessage = "Please choose your language:";
-  const options = {
-    reply_markup: {
-      inline_keyboard: [
-        [
-          { text: "Українська", callback_data: "motivate_ukr" },
-          { text: "English", callback_data: "motivate_eng" },
-          { text: "Español", callback_data: "motivate_esp" },
-        ],
-      ],
-    },
-  };
+const welcomeMessage = "Please choose your language:";
+const fireworks = "✨";
 
-  bot.sendMessage(chatId, welcomeMessage, options);
-});
-
-bot.on("callback_query", async (query) => {
-  const chatId = query.message.chat.id;
-  const callbackData = query.data;
-
-  if (callbackData.startsWith("motivate")) {
-    const language = callbackData.split("_")[1];
-
-    if (!phrases[language]) {
-      console.error(`Invalid language: ${language}`);
-      return;
-    }
-
-    const greetingMessage = greetings[language];
-    const options = {
-      reply_markup: {
-        inline_keyboard: [
-          [
-            {
-              text: motivateTexts[language],
-              callback_data: `generate_${language}`,
-            },
-          ],
-        ],
-      },
-    };
-    bot.sendMessage(chatId, greetingMessage, options);
-  }
-
-  if (callbackData.startsWith("generate")) {
-    const language = callbackData.split("_")[1];
-
-    const stickerPath = getRandomSticker();
-    if (stickerPath) {
-      try {
-        await bot.sendSticker(chatId, stickerPath);
-      } catch (error) {
-        console.error("Error sending sticker", error);
-        await bot.sendMessage(chatId, "👋😊");
-      }
-    } else {
-      await bot.sendMessage(chatId, "👋😊");
-    }
-
-    const randomPhrase =
-      phrases[language][Math.floor(Math.random() * phrases[language].length)];
-
-    if (!randomPhrase) {
-      console.error("Random phrase is empty.");
-      return;
-    }
-
-    const fireworks = "✨";
-    const styledMessage = `${fireworks} ${randomPhrase} ${fireworks}`;
-    const options = {
-      reply_markup: {
-        inline_keyboard: [
-          [
-            {
-              text: moreMotivationTexts[language],
-              callback_data: `generate_${language}`,
-            },
-          ],
-        ],
-      },
-    };
-
-    try {
-      await bot.sendMessage(chatId, styledMessage, options);
-    } catch (error) {
-      console.error("Error sending message", error);
-    }
-  }
-});
+export default {
+  welcomeMessage,
+  phrases,
+  greetings,
+  motivateButtonName,
+  moreMotivateButtonName,
+  fireworks,
+};
