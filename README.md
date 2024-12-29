@@ -2,4 +2,6 @@
  User can choose from three languages: Ukrainian, English, and Spanish, making it accessible and engaging for a variety of audiences. 
  It’s a fun and uplifting way to stay inspired!
 
-![Sticker](stickers/AnimatedSticker1.tgs)
+<p align="center">
+  <img src="stickers/AnimatedSticker1-ezgif.com-gif-maker.gif" alt="Animated kitten Sticker">
+</p>
