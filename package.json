@@ -4,8 +4,8 @@
   "description": "Telegram bot for motivation",
   "type": "module",
   "scripts": {
-    "start": "node index.js",    // Це для запуску бота без використання Vercel
-    "dev": "vercel dev",         // Це для локального запуску через Vercel
+    "start": "node index.js",  
+    "dev": "vercel dev",        
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
