@@ -6,15 +6,15 @@ import express from "express";
 
 dotenv.config();
 
-const { TELEG_TOKEN, RAILWAY_API_URL, PORT = 3000 } = process.env;
+const { TELEGRAF_TOKEN, RAILWAY_API_URL, PORT = 3000 } = process.env;
 
-const bot = new TelegramBot(TELEG_TOKEN, { polling: false });
+const bot = new TelegramBot(TELEGRAF_TOKEN, { polling: false });
 bot.setWebHook(`${RAILWAY_API_URL}/webhook`);
 const app = express();
 app.use(express.json());
-const URL = `${RAILWAY_API_URL}/bot${TELEG_TOKEN}`;
+const URL = `${RAILWAY_API_URL}/bot${TELEGRAF_TOKEN}`;
 bot.setWebHook(URL);
-app.post(`/bot${TELEG_TOKEN}`, (req, res) => {
+app.post(`/bot${TELEGRAF_TOKEN}`, (req, res) => {
   try {
     bot.processUpdate(req.body);
     res.sendStatus(200);
