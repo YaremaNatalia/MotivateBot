@@ -128,7 +128,7 @@
 
 import express from "express";
 import dotenv from "dotenv";
-import webhook from "./api/webhook.js";
+import webhook from "./webhook.js"; 
 
 dotenv.config();
 

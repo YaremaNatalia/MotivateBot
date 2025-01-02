@@ -1,7 +1,7 @@
 import TelegramBot from "node-telegram-bot-api";
 import dotenv from "dotenv";
-import getRandomSticker from "../helpers/getSticker.js";
-import messages from "../helpers/messages.js";
+import getRandomSticker from "./helpers/getSticker.js";
+import messages from "./helpers/messages.js";
 
 dotenv.config();
 
