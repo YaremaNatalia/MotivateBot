@@ -26,7 +26,7 @@
    [MotivateBot](https://t.me/ZenMotivation_bot)
 
 <p align="center">
-  <img src="stickers/kitten.gif" alt="Animated kitten Sticker">
+  <img src="helpers/stickers/kitten.gif" alt="Animated kitten Sticker">
 </p>
 
 <p align="end">

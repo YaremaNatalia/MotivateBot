@@ -13,7 +13,6 @@ bot.setWebHook(`${API_URL}/api/webhook`);
 const webhook = async (req, res) => {
   if (req.method === "POST") {
     try {
-      // Обработка вебхука от Telegram
       bot.processUpdate(req.body);
       res.status(200).send("OK");
     } catch (error) {
@@ -21,12 +20,10 @@ const webhook = async (req, res) => {
       res.status(500).send("Error processing webhook");
     }
   } else {
-    // Если запрос не POST
     res.status(405).send("Method Not Allowed");
   }
 };
 
-// Логика бота, обработка команд
 bot.onText(/\/start/, (msg) => {
   const chatId = msg.chat.id;
   const options = {
@@ -121,6 +118,35 @@ bot.on("callback_query", async (query) => {
     } catch (error) {
       console.error("Error sending message", error);
     }
+  }
+});
+
+bot.on("message", async (msg) => {
+  const chatId = msg.chat.id;
+
+  try {
+    await bot.sendSticker(chatId, "/helpers/stickers/AnimatedSticker6.tgs");
+  } catch (error) {
+    console.error("Error sending sticker", error);
+  }
+
+  const options = {
+    reply_markup: {
+      inline_keyboard: [
+        [
+          {
+            text: messages.moreMotivateButtonName[language],
+            callback_data: `generate_${language}`,
+          },
+        ],
+      ],
+    },
+  };
+
+  try {
+    await bot.sendMessage(chatId, styledMessage, options);
+  } catch (error) {
+    console.error("Error sending message", error);
   }
 });
 
