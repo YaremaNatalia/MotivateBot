@@ -128,7 +128,7 @@
 
 import express from "express";
 import dotenv from "dotenv";
-import webhookHandler from "./webhook.js"; // Імпортуємо webhook handler
+import webhook from "./api/webhook.js";
 
 dotenv.config();
 
@@ -138,7 +138,7 @@ const app = express();
 app.use(express.json()); // Розпарсити JSON тіла запитів
 
 // Налаштування шляху для webhook
-app.post("/api/webhook", webhookHandler);
+app.post("/api/webhook", webhook);
 
 // Запуск сервера
 app.listen(PORT, () => {

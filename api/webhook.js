@@ -10,7 +10,7 @@ const { TELEGRAF_TOKEN, API_URL } = process.env;
 const bot = new TelegramBot(TELEGRAF_TOKEN, { polling: false });
 bot.setWebHook(`${API_URL}/api/webhook`);
 
-export default async (req, res) => {
+const webhook = async (req, res) => {
   if (req.method === "POST") {
     try {
       // Обработка вебхука от Telegram
@@ -123,3 +123,5 @@ bot.on("callback_query", async (query) => {
     }
   }
 });
+
+export default webhook;
